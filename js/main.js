@@ -8,22 +8,30 @@ console.log('Sample JavaScript #3 HW #17');
  * если число передано в функцию – счет начинается с указанного числа
  * если нет – то счет продолжается
  */
+var counter = (function () {
+    var count = 0;
+    return function (n) {
+        if (n !== undefined) count = n;
 
-// console.log(counter()); // 0
+        return count++;
+    }
+}());
 
-// console.log(counter()); // 1
+console.log(counter()); // 0
 
-// console.log(counter(100)); // 100
+console.log(counter()); // 1
 
-// console.log(counter()); // 101
+console.log(counter(100)); // 100
 
-// console.log(counter(500)); // 500
+console.log(counter()); // 101
 
-// console.log(counter()); // 501
+console.log(counter(500)); // 500
 
-// console.log(counter(0)); // 0
+console.log(counter()); // 501
 
-// console.log(counter()); // 1
+console.log(counter(0)); // 0
+
+console.log(counter()); // 1
 
 /*
  * #2
@@ -35,34 +43,52 @@ console.log('Sample JavaScript #3 HW #17');
  * counting.increment() – увеличивает значение счетчика на 1
  * counting.decrement() – уменьшает значение счетчика на 1
  */
+let counting = (function () {
+    let count = 0;
 
-// console.log(counting.value()); // 0
+    return {
+        value (n) {
+            if (n !== undefined) count = n;
+            return count;
+        },
 
-// counting.increment();
+        increment () {
+            count++;
+        },
 
-// counting.increment();
+        decrement () {
+            count--;
+        }
+    }
+}());
 
-// counting.increment();
+console.log(counting.value()); // 0
 
-// console.log(counting.value()); // 3
+counting.increment();
 
-// counting.decrement();
+counting.increment();
 
-// counting.decrement();
+counting.increment();
 
-// console.log(counting.value()); // 1
+console.log(counting.value()); // 3
 
-// console.log(counting.value(100)); // 100
+counting.decrement();
 
-// counting.decrement();
+counting.decrement();
 
-// console.log(counting.value()); // 99
+console.log(counting.value()); // 1
 
-// console.log(counting.value(200)); // 200
+console.log(counting.value(100)); // 100
 
-// counting.increment();
+counting.decrement();
 
-// console.log(counting.value()); // 201
+console.log(counting.value()); // 99
+
+console.log(counting.value(200)); // 200
+
+counting.increment();
+
+console.log(counting.value()); // 201
 
 /*
  * #3
@@ -75,10 +101,20 @@ console.log('Sample JavaScript #3 HW #17');
  * console.log(myPow(3, 4, myPrint)); // 3^4=81
  * console.log(myPow(2, 3, myPrint)); // 2^3=8
  */
+let myPrint = (a, b, res) => `${a}^${b}=${res}`;
 
-//  console.log(myPow(3, 4, myPrint)); // 3^4=81
+let myPow = function (a, b, callback) {
+    let pow = (x, n) => {
+        if (n !== 1) return x *= pow(x,n - 1);
+        return x;
+    };
 
-// console.log(myPow(2, 3, myPrint)); // 2^3=8
+    return callback (a, b, pow(a, b));
+};
+
+console.log(myPow(3, 4, myPrint)); // 3^4=81
+
+console.log(myPow(2, 3, myPrint)); // 2^3=8
 
 /*
  * #4
@@ -90,6 +126,7 @@ console.log('Sample JavaScript #3 HW #17');
  * car.name – бренд авто, строка
  * car.year – год выпуска, число
  * car.used – строка для описания состояния авто, допускаются значения 'used' и 'new'
+ *
  *
  * #5
  *
@@ -109,24 +146,58 @@ console.log('Sample JavaScript #3 HW #17');
  * - необходимо изменить год выпуска автомобиля, установив в качестве значения текущий год
  * - если сеттеру used присвоено значение 'used', ничего делать не нужно
  */
+function allInfo() {
+    return `${this.name} ${this.model}, ${this.engine}cc, year ${this.year}, ${this.used}`;
+}
+
+let yearNow = new Date().getFullYear();
+
+let car = {
+    engine: 5000,
+    model: 'Passat CC',
+    name: 'Wolksvagen',
+    year: 2012,
+    info: allInfo,
+    get used () {
+        return this.year !== yearNow ? 'used' : 'new';
+    },
+    set used (value) {
+        if (value === 'new' && this.year < yearNow) this.year = yearNow;
+    },
+};
+
+let car2 = {
+    engine: 2000,
+    model: 'Lacetti',
+    name: 'Chevrolet',
+    year: 2010,
+    info: allInfo,
+    get used () {
+        return this.year !== yearNow ? 'used' : 'new';
+    },
+    set used (value) {
+        if (value === 'new' && this.year < yearNow) this.year = yearNow;
+    },
+};
+
 
 // let yearNow = new Date().getFullYear(); // получить текущий год как число
 
-// console.log(car.info()); // Chevrolet Lacetti, 2000cc, year 2010, used
+console.log(car.info()); // Chevrolet Lacetti, 2000cc, year 2010, used
 
-// car.used = 'new';
+car.used = 'new';
 
-// console.log(car.info()); // Chevrolet Lacetti, 2000cc, year 2019, new -- год изменен
+console.log(car.info()); // Chevrolet Lacetti, 2000cc, year 2019, new -- год изменен
 
-// car.used = 'used';
+car.used = 'used';
 
-// console.log(car.info()); // Chevrolet Lacetti, 2000cc, year 2019, new -- изменения не выполняются
+console.log(car.info()); // Chevrolet Lacetti, 2000cc, year 2019, new -- изменения не выполняются
 
-// console.log(car2.info()); // Infinite FX50 AWD, 5000cc, year 2019, new
+console.log(car2.info()); // Infinite FX50 AWD, 5000cc, year 2019, new
 
-// car.used = 'used';
+car.used = 'used';
 
-// console.log(car2.info()); // Infinite FX50 AWD, 5000cc, year 2019, new -- изменения не выполняются
+console.log(car2.info()); // Infinite FX50 AWD, 5000cc, year 2019, new -- изменения не выполняются
 
 /*
  * #7
